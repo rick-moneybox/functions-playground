@@ -3,28 +3,31 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Functions.Infrastructure.Pipeline
 {
-    public static class PipelineProcessor
+    public class PipelineProcessor
     {
-        private static readonly IPipelineBehavior[] _pipelineBehaviors;
+        readonly IPipelineBehavior[] _pipelineBehaviors;
 
-        static PipelineProcessor()
+        PipelineProcessor(params IPipelineBehavior[] pipelineBehaviors)
         {
-            // Order matters here
-            _pipelineBehaviors = new IPipelineBehavior[]
-            {
-            };
+            _pipelineBehaviors = pipelineBehaviors;
         }
 
-        public static async Task<IActionResult> ProcessAsJsonRequest(HttpRequest request, ILogger logger, IRequestHandler handler)
+        public static PipelineProcessor Build(params IPipelineBehavior[] pipelineBehaviors)
         {
-            return await ProcessAsJsonRequest(request, logger, handler, 0);
+            return new PipelineProcessor(pipelineBehaviors);
         }
 
-        static async Task<IActionResult> ProcessAsJsonRequest(
+        public async Task<HttpResponseMessage> ProcessAsJsonRequest<TRequest>(HttpRequest request, ILogger logger, IRequestHandler handler)
+        {
+            return await ProcessAsJsonRequest<TRequest>(request, logger, handler, 0);
+        }
+
+        async Task<HttpResponseMessage> ProcessAsJsonRequest<TRequest>(
             HttpRequest request, 
             ILogger logger,
             IRequestHandler handler,
@@ -37,7 +40,7 @@ namespace Functions.Infrastructure.Pipeline
 
             var pipelineBehavior = _pipelineBehaviors[depth];
 
-            return await pipelineBehavior.Process(request, logger, (r, l) => ProcessAsJsonRequest(r, l, handler, depth + 1));
+            return await pipelineBehavior.Process<TRequest>(request, logger, (r, l) => ProcessAsJsonRequest<TRequest>(r, l, handler, depth + 1));
         }
     }
 }

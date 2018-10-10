@@ -8,6 +8,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Functions.Infrastructure.Http\Functions.Infrastructure.csproj" />
+    <ProjectReference Include="..\Functions.Infrastructure.Pipeline.Deserialization\Functions.Infrastructure.Pipeline.Deserialization.csproj" />
+    <ProjectReference Include="..\Functions.Infrastructure.Pipeline.FluentValidation\Functions.Infrastructure.Pipeline.FluentValidation.csproj" />
     <ProjectReference Include="..\Functions.Infrastructure.Pipeline\Functions.Infrastructure.Pipeline.csproj" />
   </ItemGroup>
   <ItemGroup>
