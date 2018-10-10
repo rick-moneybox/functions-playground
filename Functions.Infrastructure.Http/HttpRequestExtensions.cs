@@ -15,8 +15,9 @@ namespace Functions.Infrastructure
             try
             {
                 var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
-                result = JsonConvert.DeserializeObject<TRequest>(requestBody);
+                request.Body.Position = 0;
 
+                result = JsonConvert.DeserializeObject<TRequest>(requestBody);
                 return (true, result);
             }
             catch
@@ -28,6 +29,8 @@ namespace Functions.Infrastructure
         public static async Task<TRequest> DeserializeRequestBodyAsync<TRequest>(this HttpRequest request)
         {
             var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+            request.Body.Position = 0;
+
             return JsonConvert.DeserializeObject<TRequest>(requestBody);
         }
     }

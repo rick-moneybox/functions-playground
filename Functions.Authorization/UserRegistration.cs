@@ -12,6 +12,8 @@ using System.Net.Http;
 using System.Net;
 using System;
 using Functions.Infrastructure.Responses;
+using FluentValidation;
+using Functions.Infrastructure.Pipeline.ExceptionHandling;
 
 namespace Functions.Authorization
 {
@@ -22,6 +24,7 @@ namespace Functions.Authorization
         static UserRegistration()
         {
             _pipelineProcessor = PipelineProcessor.Build(
+                new ExceptionHandlingPipelineBehavior(),
                 new DeserializationPipelineBehavior(),
                 new ValidationPipelineBehavior());
         }
@@ -32,7 +35,7 @@ namespace Functions.Authorization
             return await _pipelineProcessor.ProcessAsJsonRequest<Request>(req, log, new RequestHandler());
         }
 
-        public class Request
+        public class Request : IValidatedRequest
         {
             public string Name { get; set; }
 
@@ -41,6 +44,26 @@ namespace Functions.Authorization
             public string Password { get; set; }
 
             public string ConfirmPassword { get; set; }
+
+            public IValidator GetValidator()
+            {
+                return new RequestValidator();
+            }
+        }
+
+        public class RequestValidator : AbstractValidator<Request>
+        {
+            public RequestValidator()
+            {
+                RuleFor(x => x.Name)
+                    .NotEmpty().WithMessage("Name is required");
+
+                RuleFor(x => x.Email)
+                    .NotEmpty().WithMessage("Email is required");
+
+                RuleFor(x => x.Password)
+                    .NotEmpty().WithMessage("Password is required");
+            }
         }
 
         public class RequestHandler : IRequestHandler

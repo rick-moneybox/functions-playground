@@ -13,12 +13,14 @@ namespace Functions.Infrastructure.Pipeline.Deserialization
     {
         public async Task<HttpResponseMessage> Process<TRequest>(HttpRequest request, ILogger logger, Func<HttpRequest, ILogger, Task<HttpResponseMessage>> inner)
         {
-            var deserializationResult = await request.TryDeserializeRequestBodyAsync<TRequest>();
+            var (IsDeserialized, Body) = await request.TryDeserializeRequestBodyAsync<TRequest>();
 
-            if (!deserializationResult.IsDeserialized)
+            if (!IsDeserialized)
             {
-                var result = new ErrorJsonResponse(HttpStatusCode.BadRequest, "Invalid JSON Body");
-                result.StatusCode = HttpStatusCode.BadRequest;
+                var result = new ErrorJsonResponse(HttpStatusCode.BadRequest, "Invalid JSON Body")
+                {
+                    StatusCode = HttpStatusCode.BadRequest
+                };
 
                 return result;
             }
