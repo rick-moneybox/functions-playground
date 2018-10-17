@@ -1,5 +1,4 @@
 ﻿using Functions.Infrastucture.Pipeline;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Functions.Infrastructure.Pipeline.Deserialization
 {
-    public class DeserializationPipelineBehavior<TFunctionParams> : IPipelineBehavior<TFunctionParams> 
-        where TFunctionParams : IDeserializableHttpFunctionParams
+    public class JsonDeserializationPipelineBehavior<TFunctionParams> : IPipelineBehavior<TFunctionParams> 
+        where TFunctionParams : IJsonDeserializableHttpFunctionParams
     {
         public async Task<HttpResponseMessage> Process(TFunctionParams @params, Func<TFunctionParams, Task<HttpResponseMessage>> next)
         {

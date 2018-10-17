@@ -2,7 +2,7 @@
 
 namespace Functions.Infrastructure.Pipeline.FluentValidation
 {
-    public interface IValidatedRequest
+    public interface IFluentValidatedRequest
     {
         IValidator GetValidator();
     }

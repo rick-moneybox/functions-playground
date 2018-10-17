@@ -17,7 +17,6 @@ namespace Functions.Infrastructure
             public string Message { get; }
 
             public ErrorState(HttpStatusCode statusCode, string message)
-                : base()
             {
                 this.Error = statusCode.ToString();
                 this.Message = message;

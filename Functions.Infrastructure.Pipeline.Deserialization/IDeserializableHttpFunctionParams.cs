@@ -3,7 +3,7 @@ using System;
 
 namespace Functions.Infrastructure.Pipeline.Deserialization
 {
-    public interface IDeserializableHttpFunctionParams
+    public interface IJsonDeserializableHttpFunctionParams
     {
         HttpRequest Request { get; }
 

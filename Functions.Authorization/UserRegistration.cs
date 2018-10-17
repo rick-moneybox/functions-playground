@@ -16,6 +16,13 @@ using Functions.Infrastructure.Pipeline.ExceptionHandling;
 
 namespace Functions.Authorization
 {
+    public class FunctionParams : IJsonDeserializableHttpFunctionParams, IValidatableFunctionParams
+    {
+        public Type BodyType { get; set; }
+
+        public HttpRequest Request { get; set; }
+    }
+
     public static class UserRegistration
     {
         public static PipelineProcessor<FunctionParams> _pipelineProcessor;
@@ -25,8 +32,8 @@ namespace Functions.Authorization
             _pipelineProcessor = PipelineProcessor
                 .DefineFor<FunctionParams>()
                 .NextInPipeline(() => new ExceptionHandlingPipelineBehavior<FunctionParams>())
-                .NextInPipeline(() => new DeserializationPipelineBehavior<FunctionParams>())
-                .NextInPipeline(() => new ValidationPipelineBehavior<FunctionParams>())
+                .NextInPipeline(() => new JsonDeserializationPipelineBehavior<FunctionParams>())
+                .NextInPipeline(() => new FluentValidationPipelineBehavior<FunctionParams>())
                 .Build();
         }
 
@@ -42,14 +49,7 @@ namespace Functions.Authorization
             return await _pipelineProcessor.Process(functionParams, new RequestHandler());
         }
 
-        public class FunctionParams : IDeserializableHttpFunctionParams, IValidatableFunctionParams
-        {
-            public Type BodyType { get; set; }
-
-            public HttpRequest Request { get; set; }
-        }
-
-        public class Request : IValidatedRequest
+        public class Request : IFluentValidatedRequest
         {
             public string Name { get; set; }
 
