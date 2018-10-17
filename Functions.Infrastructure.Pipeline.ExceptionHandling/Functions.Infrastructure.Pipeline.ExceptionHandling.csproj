@@ -4,4 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Functions.Infrastructure.Http\Functions.Infrastructure.csproj" />
+    <ProjectReference Include="..\Functions.Infrastructure.Pipeline\Functions.Infrastructure.Pipeline.csproj" />
+  </ItemGroup>
+
 </Project>
