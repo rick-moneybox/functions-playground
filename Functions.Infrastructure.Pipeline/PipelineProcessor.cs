@@ -1,8 +1,7 @@
 ﻿using Functions.Infrastucture.Pipeline;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -10,37 +9,67 @@ namespace Functions.Infrastructure.Pipeline
 {
     public class PipelineProcessor
     {
-        readonly IPipelineBehavior[] _pipelineBehaviors;
+        public static PipelineProcessorConfiguration<TFunctionParams> DefineFor<TFunctionParams>()
+        {
+            return new PipelineProcessorConfiguration<TFunctionParams>();
+        }
+    }
 
-        PipelineProcessor(params IPipelineBehavior[] pipelineBehaviors)
+    public class PipelineProcessor<TFunctionParams>
+    {
+        readonly IPipelineBehavior<TFunctionParams>[] _pipelineBehaviors;
+
+        internal PipelineProcessor(params IPipelineBehavior<TFunctionParams>[] pipelineBehaviors)
         {
             _pipelineBehaviors = pipelineBehaviors;
         }
 
-        public static PipelineProcessor Build(params IPipelineBehavior[] pipelineBehaviors)
+        public Task<HttpResponseMessage> Process(
+            TFunctionParams functionParams,
+            IRequestHandler<TFunctionParams> handler)
         {
-            return new PipelineProcessor(pipelineBehaviors);
+            return Process(functionParams, handler, 0);
         }
 
-        public async Task<HttpResponseMessage> ProcessAsJsonRequest<TRequest>(HttpRequest request, ILogger logger, IRequestHandler handler)
-        {
-            return await ProcessAsJsonRequest<TRequest>(request, logger, handler, 0);
-        }
-
-        async Task<HttpResponseMessage> ProcessAsJsonRequest<TRequest>(
-            HttpRequest request, 
-            ILogger logger,
-            IRequestHandler handler,
+        async Task<HttpResponseMessage> Process(
+            TFunctionParams functionParams,
+            IRequestHandler<TFunctionParams> handler,
             int depth)
         {
             if (depth >= _pipelineBehaviors.Length)
             {
-                return await handler.Handle(request, logger);
+                return await handler.Handle(functionParams);
             }
 
             var pipelineBehavior = _pipelineBehaviors[depth];
 
-            return await pipelineBehavior.Process<TRequest>(request, logger, (r, l) => ProcessAsJsonRequest<TRequest>(r, l, handler, depth + 1));
+            return await pipelineBehavior.Process(functionParams, p => Process(p, handler, depth + 1));
+        }
+    }
+
+    public class PipelineProcessorConfiguration<TFunctionParams>
+    {
+        readonly Dictionary<int, IPipelineBehavior<TFunctionParams>> _pipelineBehaviors;
+
+        internal PipelineProcessorConfiguration()
+        {
+            _pipelineBehaviors = new Dictionary<int, IPipelineBehavior<TFunctionParams>>();
+        }
+
+        public PipelineProcessorConfiguration<TFunctionParams> NextInPipeline(Func<IPipelineBehavior<TFunctionParams>> pipelineBehaviorInitializer)
+        {
+            _pipelineBehaviors.Add(_pipelineBehaviors.Count + 1, pipelineBehaviorInitializer());
+
+            return this;
+        }
+
+        public PipelineProcessor<TFunctionParams> Build()
+        {
+            return new PipelineProcessor<TFunctionParams>(
+                _pipelineBehaviors.AsEnumerable()
+                .OrderBy(x => x.Key)
+                .Select(x => x.Value)
+                .ToArray());
         }
     }
 }

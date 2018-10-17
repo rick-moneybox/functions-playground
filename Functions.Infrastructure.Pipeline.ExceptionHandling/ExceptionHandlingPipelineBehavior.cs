@@ -1,19 +1,17 @@
 ﻿using Functions.Infrastucture.Pipeline;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Functions.Infrastructure.Pipeline.ExceptionHandling
 {
-    public class ExceptionHandlingPipelineBehavior : IPipelineBehavior
+    public class ExceptionHandlingPipelineBehavior<TFunctionParams> : IPipelineBehavior<TFunctionParams>
     {
-        public async Task<HttpResponseMessage> Process<TRequest>(HttpRequest request, ILogger logger, Func<HttpRequest, ILogger, Task<HttpResponseMessage>> inner)
+        public async Task<HttpResponseMessage> Process(TFunctionParams @params, Func<TFunctionParams, Task<HttpResponseMessage>> next)
         {
             try
             {
-                return await inner(request, logger);
+                return await next(@params);
             }
             catch (Exception ex)
             {

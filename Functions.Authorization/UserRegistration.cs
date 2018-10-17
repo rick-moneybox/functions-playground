@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
@@ -9,30 +8,45 @@ using Functions.Infrastructure.Pipeline;
 using Functions.Infrastructure.Pipeline.Deserialization;
 using Functions.Infrastructure.Pipeline.FluentValidation;
 using System.Net.Http;
-using System.Net;
 using System;
-using Functions.Infrastructure.Responses;
 using FluentValidation;
+using Functions.Infrastructure.Responses;
+using System.Net;
 using Functions.Infrastructure.Pipeline.ExceptionHandling;
 
 namespace Functions.Authorization
 {
     public static class UserRegistration
     {
-        public static PipelineProcessor _pipelineProcessor;
+        public static PipelineProcessor<FunctionParams> _pipelineProcessor;
 
         static UserRegistration()
         {
-            _pipelineProcessor = PipelineProcessor.Build(
-                new ExceptionHandlingPipelineBehavior(),
-                new DeserializationPipelineBehavior(),
-                new ValidationPipelineBehavior());
+            _pipelineProcessor = PipelineProcessor
+                .DefineFor<FunctionParams>()
+                .NextInPipeline(() => new ExceptionHandlingPipelineBehavior<FunctionParams>())
+                .NextInPipeline(() => new DeserializationPipelineBehavior<FunctionParams>())
+                .NextInPipeline(() => new ValidationPipelineBehavior<FunctionParams>())
+                .Build();
         }
 
         [FunctionName("UserRegistration")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, AllowedMethods.POST, Route = "users/register")]HttpRequest req, ILogger log)
         {
-            return await _pipelineProcessor.ProcessAsJsonRequest<Request>(req, log, new RequestHandler());
+            var functionParams = new FunctionParams
+            {
+                Request = req,
+                BodyType = typeof(Request)
+            };
+
+            return await _pipelineProcessor.Process(functionParams, new RequestHandler());
+        }
+
+        public class FunctionParams : IDeserializableHttpFunctionParams, IValidatableFunctionParams
+        {
+            public Type BodyType { get; set; }
+
+            public HttpRequest Request { get; set; }
         }
 
         public class Request : IValidatedRequest
@@ -66,9 +80,9 @@ namespace Functions.Authorization
             }
         }
 
-        public class RequestHandler : IRequestHandler
+        public class RequestHandler : IRequestHandler<FunctionParams>
         {
-            public async Task<HttpResponseMessage> Handle(HttpRequest request, ILogger logger)
+            public async Task<HttpResponseMessage> Handle(FunctionParams @params)
             {
                 await Task.Yield();
                 return new JsonResponse(HttpStatusCode.OK, new object());

@@ -1,7 +1,4 @@
 ﻿using Functions.Infrastucture.Pipeline;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -9,25 +6,25 @@ using System.Threading.Tasks;
 
 namespace Functions.Infrastructure.Pipeline.FluentValidation
 {
-    public class ValidationPipelineBehavior : IPipelineBehavior
+    public class ValidationPipelineBehavior<TFunctionParams> : IPipelineBehavior<TFunctionParams>
+        where TFunctionParams : IValidatableFunctionParams
     {
-        public async Task<HttpResponseMessage> Process<TRequest>(HttpRequest request, ILogger logger, Func<HttpRequest, ILogger, Task<HttpResponseMessage>> inner)
+        public async Task<HttpResponseMessage> Process(TFunctionParams @params, Func<TFunctionParams, Task<HttpResponseMessage>> next)
         {
-            var requestBody = await request.DeserializeRequestBodyAsync<TRequest>();
+            var requestBody = await @params.Request.DeserializeRequestBodyAsync(@params.BodyType);
 
-            if (requestBody is IValidatedRequest)
+            if (typeof(IValidatedRequest).IsAssignableFrom(@params.BodyType))
             {
                 var validator = ((IValidatedRequest)requestBody).GetValidator();
                 var validationResult = await validator.ValidateAsync(requestBody);
-                
+
                 if (!validationResult.IsValid)
                 {
                     return new ErrorJsonResponse(System.Net.HttpStatusCode.BadRequest, $"{validationResult.Errors.First().ErrorMessage}");
                 }
             }
 
-            // TODO:
-            return await inner(request, logger);
+            return await next(@params);
         }
     }
 }

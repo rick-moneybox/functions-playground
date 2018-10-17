@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Functions.Infrastucture.Pipeline
 {
-    public interface IPipelineBehavior
+    public interface IPipelineBehavior<TFunctionParams>
     {
-        Task<HttpResponseMessage> Process<TRequest>(
-            HttpRequest request, 
-            ILogger logger, 
-            Func<HttpRequest, ILogger, Task<HttpResponseMessage>> inner);
+        Task<HttpResponseMessage> Process(
+            TFunctionParams @params,
+            Func<TFunctionParams, Task<HttpResponseMessage>> next);
     }
 }
