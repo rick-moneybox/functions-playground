@@ -13,6 +13,9 @@ using FluentValidation;
 using Functions.Infrastructure.Responses;
 using System.Net;
 using Functions.Infrastructure.Pipeline.ExceptionHandling;
+using Microsoft.Azure.Documents.Client;
+using Functions.Authorization.Repostitory;
+using Functions.Authorization.Domain;
 
 namespace Functions.Authorization
 {
@@ -21,6 +24,8 @@ namespace Functions.Authorization
         public Type BodyType { get; set; }
 
         public HttpRequest Request { get; set; }
+
+        public DocumentClient UsersDocumentClient { get; set; }
     }
 
     public static class UserRegistration
@@ -38,12 +43,20 @@ namespace Functions.Authorization
         }
 
         [FunctionName("UserRegistration")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, AllowedMethods.POST, Route = "users/register")]HttpRequest req, ILogger log)
+        public static async Task<HttpResponseMessage> Run(
+            [HttpTrigger(AuthorizationLevel.Function, AllowedMethods.POST, Route = "users/register")]HttpRequest req,
+            [CosmosDB(
+                databaseName: "Authorization",
+                collectionName: "Users",
+                ConnectionStringSetting = "CosmosDBConnection",
+                CreateIfNotExists = true)] DocumentClient client,
+            ILogger log)
         {
             var functionParams = new FunctionParams
             {
                 Request = req,
-                BodyType = typeof(Request)
+                BodyType = typeof(Request),
+                UsersDocumentClient = client
             };
 
             return await _pipelineProcessor.Process(functionParams, new RequestHandler());
@@ -62,6 +75,14 @@ namespace Functions.Authorization
             public IValidator GetValidator()
             {
                 return new RequestValidator();
+            }
+        }
+
+        public class CreatedResponse : JsonResponse
+        {
+            public CreatedResponse(string id)
+                : base(HttpStatusCode.Created, new { Id = id })
+            {
             }
         }
 
@@ -84,8 +105,20 @@ namespace Functions.Authorization
         {
             public async Task<HttpResponseMessage> Handle(FunctionParams @params)
             {
-                await Task.Yield();
-                return new JsonResponse(HttpStatusCode.OK, new object());
+                var request = await @params.Request.DeserializeRequestBodyAsync<Request>();
+                var repository = new UserRepository(@params.UsersDocumentClient);
+
+                var user = await repository.GetByEmailAsync(request.Email);
+                if (user != null)
+                {
+                    return new ErrorJsonResponse(HttpStatusCode.BadRequest, "Email address already in use");
+                }
+
+                user = new User(request.Name, request.Email, request.Password);
+
+                var id = await repository.InsertUserAsync(user);
+
+                return new CreatedResponse(id);
             }
         }
     }
