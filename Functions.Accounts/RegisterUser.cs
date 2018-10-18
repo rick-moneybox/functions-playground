@@ -28,11 +28,11 @@ namespace Functions.Accounts
         public DocumentClient UsersDocumentClient { get; set; }
     }
 
-    public static class UserRegistration
+    public static class RegisterUser
     {
         public static PipelineProcessor<FunctionParams> _pipelineProcessor;
 
-        static UserRegistration()
+        static RegisterUser()
         {
             _pipelineProcessor = PipelineProcessor
                 .DefineFor<FunctionParams>()
@@ -42,7 +42,7 @@ namespace Functions.Accounts
                 .Build();
         }
 
-        [FunctionName("UserRegistration")]
+        [FunctionName("RegisterUser")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Function, AllowedMethods.POST, Route = "users/register")]HttpRequest req,
             [CosmosDB(
