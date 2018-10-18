@@ -14,8 +14,9 @@ using Functions.Infrastructure.Responses;
 using System.Net;
 using Functions.Infrastructure.Pipeline.ExceptionHandling;
 using Microsoft.Azure.Documents.Client;
-using Functions.Accounts.Repostitory;
-using Functions.Accounts.Domain;
+using Functions.Accounts.Core.Repositories;
+using Functions.Accounts.DataAccess.Repositories;
+using Functions.Accounts.Core.Domain;
 
 namespace Functions.Accounts
 {
@@ -106,7 +107,7 @@ namespace Functions.Accounts
             public async Task<HttpResponseMessage> Handle(FunctionParams @params)
             {
                 var request = await @params.Request.DeserializeRequestBodyAsync<Request>();
-                var repository = new UserRepository(@params.UsersDocumentClient);
+                IUserRepository repository = new UserRepository(@params.UsersDocumentClient);
 
                 var user = await repository.GetByEmailAsync(request.Email);
                 if (user != null)

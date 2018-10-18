@@ -9,6 +9,8 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.22" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Functions.Accounts.Core\Functions.Accounts.Core.csproj" />
+    <ProjectReference Include="..\Functions.Accounts.DataAccess\Functions.Accounts.DataAccess.csproj" />
     <ProjectReference Include="..\Functions.Infrastructure.Http\Functions.Infrastructure.csproj" />
     <ProjectReference Include="..\Functions.Infrastructure.Pipeline.Deserialization\Functions.Infrastructure.Pipeline.Deserialization.csproj" />
     <ProjectReference Include="..\Functions.Infrastructure.Pipeline.ExceptionHandling\Functions.Infrastructure.Pipeline.ExceptionHandling.csproj" />
@@ -25,6 +27,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Functions.Accounts.Domain
+namespace Functions.Accounts.Core.Domain
 {
     public class User
     {

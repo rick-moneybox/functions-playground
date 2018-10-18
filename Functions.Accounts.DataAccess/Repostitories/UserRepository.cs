@@ -1,13 +1,14 @@
-﻿using Functions.Accounts.Domain;
+﻿using Functions.Accounts.Core.Domain;
+using Functions.Accounts.Core.Repositories;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Functions.Accounts.Repostitory
+namespace Functions.Accounts.DataAccess.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         readonly DocumentClient _client;
         readonly Uri _databaseUri;
