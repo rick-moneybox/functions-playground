@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Functions.Authorization.Domain
+namespace Functions.Accounts.Domain
 {
     public class User
     {

@@ -14,10 +14,10 @@ using Functions.Infrastructure.Responses;
 using System.Net;
 using Functions.Infrastructure.Pipeline.ExceptionHandling;
 using Microsoft.Azure.Documents.Client;
-using Functions.Authorization.Repostitory;
-using Functions.Authorization.Domain;
+using Functions.Accounts.Repostitory;
+using Functions.Accounts.Domain;
 
-namespace Functions.Authorization
+namespace Functions.Accounts
 {
     public class FunctionParams : IJsonDeserializableHttpFunctionParams, IValidatableFunctionParams
     {

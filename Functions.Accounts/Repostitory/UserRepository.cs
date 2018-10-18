@@ -1,11 +1,11 @@
-﻿using Functions.Authorization.Domain;
+﻿using Functions.Accounts.Domain;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Functions.Authorization.Repostitory
+namespace Functions.Accounts.Repostitory
 {
     public class UserRepository
     {

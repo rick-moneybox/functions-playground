@@ -9,13 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{73
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions.Infrastructure.Pipeline", "Functions.Infrastructure.Pipeline\Functions.Infrastructure.Pipeline.csproj", "{9D600B14-2AA4-4A40-B69A-70D36B7EEDAD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions.Authorization", "Functions.Authorization\Functions.Authorization.csproj", "{6E6DA643-0FDB-4C31-9DB8-F77C5AFE42FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions.Infrastructure.Pipeline.FluentValidation", "Functions.Infrastructure.Pipeline.FluentValidation\Functions.Infrastructure.Pipeline.FluentValidation.csproj", "{210DAE54-982D-4E6C-A79A-0C1675C89FAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions.Infrastructure.Pipeline.FluentValidation", "Functions.Infrastructure.Pipeline.FluentValidation\Functions.Infrastructure.Pipeline.FluentValidation.csproj", "{210DAE54-982D-4E6C-A79A-0C1675C89FAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions.Infrastructure.Pipeline.Deserialization", "Functions.Infrastructure.Pipeline.Deserialization\Functions.Infrastructure.Pipeline.Deserialization.csproj", "{FB16840E-2DC8-4856-8305-2D2178EB030B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions.Infrastructure.Pipeline.Deserialization", "Functions.Infrastructure.Pipeline.Deserialization\Functions.Infrastructure.Pipeline.Deserialization.csproj", "{FB16840E-2DC8-4856-8305-2D2178EB030B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions.Infrastructure.Pipeline.ExceptionHandling", "Functions.Infrastructure.Pipeline.ExceptionHandling\Functions.Infrastructure.Pipeline.ExceptionHandling.csproj", "{0AF494FE-CA85-4C9A-B178-F0826FE65C50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions.Infrastructure.Pipeline.ExceptionHandling", "Functions.Infrastructure.Pipeline.ExceptionHandling\Functions.Infrastructure.Pipeline.ExceptionHandling.csproj", "{0AF494FE-CA85-4C9A-B178-F0826FE65C50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions.Accounts", "Functions.Accounts\Functions.Accounts.csproj", "{4339BE9D-3FA3-49A1-8C06-DDC6ECE525C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		{9D600B14-2AA4-4A40-B69A-70D36B7EEDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D600B14-2AA4-4A40-B69A-70D36B7EEDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D600B14-2AA4-4A40-B69A-70D36B7EEDAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E6DA643-0FDB-4C31-9DB8-F77C5AFE42FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E6DA643-0FDB-4C31-9DB8-F77C5AFE42FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E6DA643-0FDB-4C31-9DB8-F77C5AFE42FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E6DA643-0FDB-4C31-9DB8-F77C5AFE42FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{210DAE54-982D-4E6C-A79A-0C1675C89FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{210DAE54-982D-4E6C-A79A-0C1675C89FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{210DAE54-982D-4E6C-A79A-0C1675C89FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,6 +43,10 @@ Global
 		{0AF494FE-CA85-4C9A-B178-F0826FE65C50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AF494FE-CA85-4C9A-B178-F0826FE65C50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AF494FE-CA85-4C9A-B178-F0826FE65C50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4339BE9D-3FA3-49A1-8C06-DDC6ECE525C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4339BE9D-3FA3-49A1-8C06-DDC6ECE525C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4339BE9D-3FA3-49A1-8C06-DDC6ECE525C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4339BE9D-3FA3-49A1-8C06-DDC6ECE525C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
