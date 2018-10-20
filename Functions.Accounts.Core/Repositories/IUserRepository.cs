@@ -7,6 +7,6 @@ namespace Functions.Accounts.Core.Repositories
     {
         Task<User> GetByEmailAsync(string email);
 
-        Task<string> InsertUserAsync(User user);
+        Task<User> InsertUserAsync(User user);
     }
 }

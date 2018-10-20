@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Functions.Accounts.Core\Functions.Accounts.Core.csproj" />
     <ProjectReference Include="..\Functions.Infrastructure.Http\Functions.Infrastructure.csproj" />
+    <ProjectReference Include="..\Functions.Tutorials.Core\Functions.Tutorials.Core.csproj" />
   </ItemGroup>
 
 </Project>

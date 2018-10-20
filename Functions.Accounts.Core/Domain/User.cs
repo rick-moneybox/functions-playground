@@ -5,22 +5,25 @@ namespace Functions.Accounts.Core.Domain
 {
     public class User
     {
-        public UserState State { get; }
+        private UserState _state;
+
+        public UserState State =>
+            JsonConvert.DeserializeObject<UserState>(JsonConvert.SerializeObject(_state));
 
         public User(UserState userState)
         {
-            State = userState;
+            _state = userState;
         }
 
         public User(string name, string email, string password) 
             : this(new UserState())
         {
-            State.Id = Guid.NewGuid().ToString();
-            State.Email = email;
-            State.Name = name;
+            _state.Id = Guid.NewGuid().ToString();
+            _state.Email = email;
+            _state.Name = name;
 
             // TODO: Hash
-            State.PasswordHash = password;
+            _state.PasswordHash = password;
         }
     }
 

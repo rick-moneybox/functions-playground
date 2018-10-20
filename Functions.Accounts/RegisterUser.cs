@@ -47,7 +47,7 @@ namespace Functions.Accounts
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Function, AllowedMethods.POST, Route = "users/register")]HttpRequest req,
             [CosmosDB(
-                databaseName: "Authorization",
+                databaseName: "Moneybox",
                 collectionName: "Users",
                 ConnectionStringSetting = "CosmosDBConnection",
                 CreateIfNotExists = true)] DocumentClient client,
@@ -116,10 +116,9 @@ namespace Functions.Accounts
                 }
 
                 user = new User(request.Name, request.Email, request.Password);
+                user = await repository.InsertUserAsync(user);
 
-                var id = await repository.InsertUserAsync(user);
-
-                return new CreatedResponse(id);
+                return new CreatedResponse(user.State.Id);
             }
         }
     }

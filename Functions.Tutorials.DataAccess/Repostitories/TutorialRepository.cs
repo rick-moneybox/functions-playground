@@ -1,6 +1,6 @@
-﻿using Functions.Accounts.Core.Domain;
-using Functions.Accounts.Core.Repositories;
-using Functions.Infrastructure;
+﻿using Functions.Infrastructure;
+using Functions.Tutorials.Core.Domain;
+using Functions.Tutorials.Core.Repositories;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System;
@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Functions.Accounts.DataAccess.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class TutorialRepository : ITutorialRepository
     {
         public static readonly string DatabaseName = "Moneybox";
-        public static readonly string CollectionName = "Users";
+        public static readonly string CollectionName = "Tutorials";
 
         readonly DocumentClient _client;
         readonly Uri _databaseUri;
         readonly Uri _documentCollectionUri;
 
-        public UserRepository(DocumentClient client)
+        public TutorialRepository(DocumentClient client)
         {
             _client = client;
 
@@ -26,37 +26,35 @@ namespace Functions.Accounts.DataAccess.Repositories
             _documentCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, CollectionName);
         }
 
-        public async Task<User> GetByEmailAsync(string email)
+        public async Task<Tutorial> FindTutorial(string userId)
         {
             await InitializeDatabase();
 
-            IDocumentQuery<UserState> query = _client.CreateDocumentQuery<UserState>(_documentCollectionUri)
-                .Where(p => p.Email == email)
+            IDocumentQuery<TutorialState> query = _client.CreateDocumentQuery<TutorialState>(_documentCollectionUri)
+                .Where(p => p.UserId == userId)
                 .AsDocumentQuery();
 
             if (query.HasMoreResults)
             {
-                foreach (UserState userState in await query.ExecuteNextAsync<UserState>())
+                foreach (TutorialState tutorialState in await query.ExecuteNextAsync<TutorialState>())
                 {
-                    return new User(userState);
+                    return new Tutorial(tutorialState);
                 }
             }
 
             return null;
         }
 
-        public async Task<User> InsertUserAsync(User user)
+        public async Task<Tutorial> UpsertTutorial(Tutorial tutorial)
         {
             await InitializeDatabase();
 
-            var documentUri = UriFactory.CreateDocumentUri(DatabaseName, CollectionName, user.State.Id);
-
-            var response = await _client.CreateDocumentAsync(
-                _documentCollectionUri, 
-                user.State,
+            var response = await _client.UpsertDocumentAsync(
+                _documentCollectionUri,
+                tutorial.State,
                 disableAutomaticIdGeneration: false);
 
-            return user;
+            return tutorial;
         }
 
         async Task InitializeDatabase()
